@@ -2,10 +2,20 @@
   "expo": {
     "name": "auto2",
     "slug": "auto2",
-    "version": "1.0.0",
+    "version": "1.0.4",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "splash": {
+      "image": "./assets/img/loader.png",
+      "resizeMode": "cover"
+    },
+    "android": {
+      "package": "justcode.auto",
+      "permissions": [],
+      "googleServicesFile": "./google-services.json"
+    },
+    "description": ""
   },
   "name": "auto2"
 }
