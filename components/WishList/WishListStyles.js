@@ -1,43 +1,74 @@
-import { Dimensions, StatusBar, StyleSheet} from 'react-native'
+import {Dimensions, StatusBar, StyleSheet} from 'react-native'
 
-const wishhListStyles = StyleSheet.create({
-    container: {
+const wishListStyles = StyleSheet.create({
+
+    wishListScreenMainView: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight,
+        // width: Dimensions.get('window').width,
+        paddingTop: StatusBar.currentHeight + 23,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        marginTop: 20,
+
     },
-    scrollView: {
+
+
+    wishTitleWrapper: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        paddingHorizontal: 25,
+    },
+
+    wishTitle: {
+        fontSize: 24,
+        color: '#424A55',
+        fontWeight: 'bold'
+    },
+
+    safeArea: {
         marginHorizontal: 23,
+        marginTop: 30
+
     },
     text: {
         fontSize: 42,
     },
-    wishhListScreenMainView:{
+    feedsScreenMainView:{
         flex: 1,
         // width: Dimensions.get('window').width,
-        paddingTop: StatusBar.currentHeight+23,
+        paddingTop: StatusBar.currentHeight+40,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white'
 
     },
-    wishhListCaritems: {
+    feedsCaritems: {
         height: 125,
         alignSelf: 'stretch',
         width:Dimensions.get('window').width,
-        marginBottom:20,
+        marginBottom:30,
         flex: 1,
         flexDirection: 'row',
         borderRadius:13,
         overflow:'hidden'
     },
-    wishhListCarImgWrapper: {
+    feedsCarImgWrapper: {
     },
-    wishhListCaritemsImg: {
+    feedsCaritemsImg: {
+        width: 170,
+        height: 130,
 
     },
-    wishhListCarItemRight: {
-        padding:15
+    feedsCarItemRight: {
+        flexDirection: "column",
+        paddingLeft: 20,
+        justifyContent: "flex-start",
+
     },
+
     addinwish: {
         position:'absolute',
         width: 28,
@@ -47,15 +78,16 @@ const wishhListStyles = StyleSheet.create({
         zIndex: 1,
     },
     textInputStyle: {
-        height:40,
+        height: 45,
         flex:1,
         color:'#424A55'
     },
     textInputWrapperStyle: {
         width: Dimensions.get('window').width,
-        paddingLeft:20,
-        paddingRight:20,
-        marginBottom:30,
+        paddingHorizontal: 20,
+        marginBottom: 20,
+        position: "absolute",
+        top: 35,
     },
     textInputContainerStyle: {
         backgroundColor: '#F0F4F8',
@@ -108,18 +140,18 @@ const wishhListStyles = StyleSheet.create({
     },
 
     filterSearchButton: {
+        marginTop:59,
         width:'100%',
         height:50,
         backgroundColor: 'green',
         color:'white',
         justifyContent: 'center',
         alignItems:'center',
-        borderRadius:8
+        borderRadius:8,
     },
     sortByWrapper: {
         width:'100%',
-        height: 169,
-        marginTop:20,
+        height: 210,
         backgroundColor:'#F0F4F8',
         borderRadius:10,
         padding: 15
@@ -136,10 +168,29 @@ const wishhListStyles = StyleSheet.create({
         paddingLeft:15,
         paddingRight:15,
     },
+    locationWrapper: {
+        width:'100%',
+        height: 'auto',
+        marginTop:20,
+        backgroundColor:'#F0F4F8',
+        borderRadius:10,
+        paddingTop:15,
+        paddingLeft:15,
+        paddingRight:15,
+        zIndex: 5
+    },
     minPriceWrapper:{
         height:48,
         borderBottomColor: "#a2abc25c",
         borderBottomWidth: 1
+    },
+    streetWrapper:{
+        height:48,
+        borderBottomColor: "#a2abc25c",
+        borderBottomWidth: 1,
+        borderWidth: 0,
+        marginBottom:50,
+        paddingLeft:2
     },
     maxPriceWrapper: {
         height:48
@@ -183,22 +234,19 @@ const wishhListStyles = StyleSheet.create({
         fontSize: 11,
         marginBottom: 17
     },
+    category1:{
+        borderRadius: 15,
+        marginBottom: 25,
+        zIndex: 10
+    },
 
-    wishTitleWrapper:{
-        alignItems: 'center',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width:'100%',
-        paddingLeft:23,
-        paddingRight:20,
-        marginBottom:30
-    },
-    wishTitle:{
-        fontSize:24,
-        color:'#424A55',
-        fontWeight:'bold'
-    },
+    costCategory:{
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        backgroundColor: '#F0F4F8',
+
+    }
 
 });
 
-export {wishhListStyles};
+export {wishListStyles};

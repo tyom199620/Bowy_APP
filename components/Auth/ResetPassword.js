@@ -29,6 +29,7 @@ export default class ResetPassword extends Component {
         })
     }
 
+
     handleCheckRegex = () => {
         const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!reg.test(this.state.email) === true) {
@@ -46,6 +47,25 @@ export default class ResetPassword extends Component {
             alert("Код восстонавления отправлень на ваш адресс")
         }
         console.log(this.state.emailFlag)
+    }
+
+
+    sendEmail = () => {
+        fetch("http://bowy.ru/api/code-sending", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: this.state.email})
+        })
+            .then(res => res.json())
+            .then((res) => {
+                if (res.success){
+                    this.props.navigation.navigate('EditPassword')
+                }
+            }).catch((e) => {
+            console.log("errror")
+        })
     }
 
     render() {
@@ -99,7 +119,7 @@ export default class ResetPassword extends Component {
                     </View>
 
                     <LinearGradient colors={['#34BE7C', '#2EB6A5']} style={styles.linerGradient}>
-                        <TouchableOpacity style={styles.button} onPress={() => this.handleCheckRegex()}>
+                        <TouchableOpacity style={styles.button} onPress={this.sendEmail}>
                             <Text style={{color: 'white'}}>
                                 Отправить Код {"\n"}
                                 Подтверждения

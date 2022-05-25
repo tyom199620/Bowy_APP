@@ -15,83 +15,172 @@ import {
 } from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {LinearGradient} from 'expo-linear-gradient';
-
+import {Ionicons} from '@expo/vector-icons';
 import {SliderBox} from "react-native-image-slider-box";
 
 import {singleCarStyles} from './singleCarStyles';
 import {feedsStyles} from "../Feeds/feedsStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import * as Svg from 'react-native-svg';
 
 const {StatusBarManager} = NativeModules;
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBarManager.HEIGHT;
+
+
+const wishIcons = [
+    require('../../assets/img/addinwish.png'),
+    require('../../assets/img/addinwishactive.png')
+];
+
 
 export default class App extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            images: [
-                "https://source.unsplash.com/1024x768/?nature",
-                "https://source.unsplash.com/1024x768/?water",
-                "https://source.unsplash.com/1024x768/?girl",
-                "https://source.unsplash.com/1024x768/?tree"
-            ],
             width: 0,
-            slider_count: this.props.auto_data.slider.length,
-            current_slide: 1
+            current_slide: 1,
+            autoData: {},
+            userData: {},
+            userID: "",
+            userAnnouncements: "",
+            imageList: [],
+            settingComponent: false,
+            wishListId: [],
         };
     }
 
-    // componentDidMount(){
-    //     this.setState({
-    //         auto_data: {},
-    //     });
-    // }
+
+    getInfo = async () => {
+        try {
+            await this.setState({autoData: this.props.auto_data.info})
+            await this.setState({imageList: ["http://bowy.ru/storage/uploads/" + this.props.auto_data.info?.image[0]?.image]})
+
+            fetch(`http://bowy.ru/api/announcement-unlogged/${this.props.auto_data.info.user_id}`, {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((res) => {
+                    this.setState({userData: res[0]})
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+
+        } catch (e) {
+            //////////////
+        }
+
+    }
+
+    addToFavourites = async (userID, productID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+                body: JSON.stringify({user_id: userID, product_id: productID})
+            })
+                .then(res => res.json())
+                .then((res) => {
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    removeFromFavourites = async (itemID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch(`http://bowy.ru/api/favourites/${itemID}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+            })
+                .then((res) => res.json())
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    getFavouriteItems = async () => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+
+            })
+                .then(res => res.json())
+                .then(res => {
+                    this.setState({wishListId: res["0"].map((item) => item.id)});
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    hideSettings = () => {
+        this.setState((prev) => ({settingComponent: !prev.settingComponent}))
+    }
 
 
-    // componentDidUpdate() {
-    //     // const { navigation } = this.props;
-    //     // this.focusListener = navigation.addListener("didFocus", () => {
-    //     //    console.log('componentDidMount')
-    //     // });
-    //
-    //     console.log('componentDidUpdate')
-    //
-    // }
-    //
-    // componentDidMount() {
-    //     // const { navigation } = this.props;
-    //     // this.focusListener = navigation.addListener("didFocus", () => {
-    //     //    console.log('componentDidMount')
-    //     // });
-    //
-    //     console.log('componentDidMount')
-    //
-    // }
-    //
-    // componentWillUnmount() {
-    //     // Remove the event listener
-    //     console.log('componentWillUnmount')
-    //
-    //     this.focusListener.remove();
-    // }
-    //
+    componentDidMount() {
+
+        this.focusListener = this.props.navigation.addListener("focus", () => {
+            this.getInfo()
+            this.getUserID()
+            this.getFavouriteItems()
+        });
+
+
+    }
+
+    getUserID = async () => {
+        try {
+            const ID = await AsyncStorage.getItem("loggedUserID")
+            this.setState({userID: ID})
+        } catch (e) {
+
+        }
+    }
+
+
+    componentWillUnmount() {
+
+    }
+
     handleBackButtonClick = () => {
 
-        console.log(this.props);
 
         this.props.navigation.navigate('Feeds');
         // return true;
     };
 
 
-    handleEditBtnClick = (data) => {
-        this.props.navigation.navigate( "EditCar", {
-                params: this.props.auto_data,
-                navigation: JSON.stringify(this.props.navigation)
-            }
-        )
-    };
 
 
     onLayout = e => {
@@ -100,16 +189,64 @@ export default class App extends Component {
         });
     };
 
+    deleteProduct = async () => {
+
+        Alert.alert("", "вы уверены что хотите удалить", [
+            {
+                text: "Да", onPress: async () => {
+                    try {
+
+                        let userToken = await AsyncStorage.getItem("userToken")
+                        let AuthStr = "Bearer " + userToken
+                        fetch("http://bowy.ru/api/products/" + this.state.autoData.id, {
+                            method: "DELETE",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'Authorization': AuthStr,
+                            },
+                        })
+                            .then(res => res.json())
+                            .then((res) => {
+                                if (res.success) {
+                                    this.setState({settingComponent: false})
+                                    this.props.navigation.navigate("Feeds")
+                                }
+                            })
+                    } catch (e) {
+
+                    }
+                }
+            },
+            {
+                text: "Нет", onPress: () => {
+                    this.setState({settingComponent: false})
+                }
+            }
+
+
+        ])
+
+
+    }
+
+
+    editProduct = () => {
+        this.props.navigation.navigate("EditCar", {
+                params: this.state.autoData,
+                navigation: JSON.stringify(this.props.navigation)
+            }
+        )
+    }
+
     render() {
-
-
         return (
 
             <View style={{width: '100%', flex: 1}}>
 
                 <View onLayout={this.onLayout} style={{width: '100%'}}>
 
-                    <SliderBox images={this.props.auto_data.slider}
+                    <SliderBox images={this.state.imageList}
                                onCurrentImagePressed={index => console.log(`image ${index} pressed`)}
                                currentImageEmitter={index => this.setState({
                                    current_slide: index + 1
@@ -133,27 +270,51 @@ export default class App extends Component {
                                source={require('../../assets/img/arrow_right.png')}/>
                     </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={{
-                            width: 20,
-                            height: 20,
+
+                    {Number(this.state.userID) === Number(this.state.userData.id) ?
+                        <TouchableOpacity onPress={this.hideSettings} style={{
+                            width: 30,
+                            height: 30,
                             zIndex: 55,
                             position: 'absolute',
-                            right: 30,
+                            right: 20,
+                            top: STATUSBAR_HEIGHT + 22
+                        }}>
+                            <Ionicons name="ios-settings-sharp" size={24} color="white"
+                                      style={{width: '100%', height: '100%'}}/>
+                        </TouchableOpacity> : null}
+
+
+                    {Number(this.state.userID) !== Number(this.state.userData.id) ? <TouchableOpacity
+                        style={{
+                            width: 30,
+                            height: 19,
+                            zIndex: 55,
+                            position: 'absolute',
+                            right: 20,
                             top: STATUSBAR_HEIGHT + 22
                         }}
-                        onPress={this.handleEditBtnClick}>
-                        <Image style={{width: '100%', height: '100%',}}
-                               source={require('../../assets/img/refactor.png')}/>
-                    </TouchableOpacity>
+                        onPress={() => {
+                            if (this.state.wishListId.includes(this.state.autoData.id)) {
+                                this.setState(prev => ({wishListId: prev.wishListId.filter(items => this.state.autoData.id !== items)}))
+                                this.removeFromFavourites(this.state.autoData.id)
 
-                    {/*<TouchableOpacity style={{width:20, height:20, zIndex:55, position:'absolute', right:78, top:STATUSBAR_HEIGHT+22}}>*/}
-                    {/*    <Image style={{width:'100%', height:'100%'}} source={ require('../../assets/img/send_message.png')}/>*/}
-                    {/*</TouchableOpacity>*/}
+                            } else {
+                                this.setState((prev) => ({wishListId: [...prev.wishListId, this.state.autoData.id]}))
+                                this.addToFavourites(this.state.autoData.user_id, this.state.autoData.id)
+                            }
+                        }}>
+                        <Image
+                            source={this.state.wishListId.includes(this.state.autoData.id) ? wishIcons[1] : wishIcons[0]}/>
+                    </TouchableOpacity> : null}
 
-                    {/*<TouchableOpacity style={{width:20, height:19, zIndex:55, position:'absolute', right:24, top:STATUSBAR_HEIGHT+22}}>*/}
-                    {/*    <Image style={{width:'100%', height:'100%'}} source={ require('../../assets/img/single_car_wish.png')}/>*/}
-                    {/*</TouchableOpacity>*/}
+
+                    {this.state.settingComponent &&
+                        <View style={[singleCarStyles.settingView, {top: STATUSBAR_HEIGHT + 50}]}>
+                            <TouchableOpacity onPress={this.deleteProduct}><Text>Удалить публикацию</Text></TouchableOpacity>
+                            <TouchableOpacity style={{paddingTop: 5}} onPress={this.editProduct}><Text>Изменить данные</Text></TouchableOpacity>
+                        </View>}
+
 
                     <View style={{
                         justifyContent: "center",
@@ -172,7 +333,7 @@ export default class App extends Component {
                             alignItems: 'center'
                         }}>
                             <Text style={{color: 'white'}}>
-                                {this.state.current_slide} - {this.state.slider_count}
+                                {this.state.current_slide} - {this.state.imageList.length}
                             </Text>
                         </View>
 
@@ -182,38 +343,29 @@ export default class App extends Component {
 
                 <View style={singleCarStyles.whiteWrapper}>
 
-                    <View style={{
-                        borderTopLeftRadius: 20,
-                        borderTopRightRadius: 20,
-                        backgroundColor: 'white',
-                        width: this.state.width,
-                        height: 20,
-                        position: 'absolute',
-                        top: -15,
-                    }}><Text style={{display: 'none'}}>.</Text></View>
 
                     <ScrollView>
                         <Text style={singleCarStyles.autoTitle}>
-                            {this.props.auto_data.title}
+                            {this.state.autoData?.headline}
                         </Text>
 
                         <Text style={singleCarStyles.autoPrice}>
-                            {this.props.auto_data.price}
+                            {this.state.autoData?.price}
                         </Text>
 
                         <Text style={singleCarStyles.autoAddress}>
-                            {this.props.auto_data.address}
+                            {this.state.autoData?.address}
                         </Text>
 
                         <Text style={singleCarStyles.autoDate}>
-                            {this.props.auto_data.date}
+                            {this.state.autoData?.updated_at?.split("").slice(0, 10).join("")}
                         </Text>
 
                         <Text style={singleCarStyles.autoDescription}>
-                            {this.props.auto_data.description}
+                            {this.state.autoData?.description}
                         </Text>
 
-                        {/* info items*/}
+                        {/*    /!* info items*!/*/}
 
                         <View style={singleCarStyles.infoWrapper}>
 
@@ -222,7 +374,7 @@ export default class App extends Component {
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.infoValue}>{this.props.auto_data.autoMark} </Text>
+                                <Text style={singleCarStyles.infoValue}>{this.state.autoData?.car_model} </Text>
                             </View>
                         </View>
 
@@ -233,7 +385,7 @@ export default class App extends Component {
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.infoValue}>{this.props.auto_data.body_type} </Text>
+                                <Text style={singleCarStyles.infoValue}>{this.state.autoData?.body_type} </Text>
                             </View>
                         </View>
 
@@ -244,7 +396,8 @@ export default class App extends Component {
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.infoValue}>{this.props.auto_data.yearOfIssue} </Text>
+                                <Text
+                                    style={singleCarStyles.infoValue}>{this.state.autoData?.year_of_issue} </Text>
                             </View>
                         </View>
 
@@ -255,7 +408,7 @@ export default class App extends Component {
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.infoValue}>{this.props.auto_data.transmission}</Text>
+                                <Text style={singleCarStyles.infoValue}>{this.state.autoData?.transmission}</Text>
                             </View>
                         </View>
 
@@ -266,7 +419,7 @@ export default class App extends Component {
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.infoValue}>{this.props.auto_data.rull} </Text>
+                                <Text style={singleCarStyles.infoValue}>{this.state.autoData?.rudder} </Text>
                             </View>
 
                         </View>
@@ -282,13 +435,15 @@ export default class App extends Component {
                         <View style={singleCarStyles.userWrapper}>
 
                             <View style={singleCarStyles.userImageWrapper}>
-                                <Image style={singleCarStyles.userImage} source={this.props.auto_data.userImage}/>
+                                <Image style={singleCarStyles.userImage}
+                                       source={{uri: `http://bowy.ru/storage/uploads/${this.state.userData.image}`}}
+                                />
                             </View>
 
                             <View>
-                                <Text style={singleCarStyles.userName}>{this.props.auto_data.user_name}</Text>
+                                <Text style={singleCarStyles.userName}>{this.state.userData.name}</Text>
                                 <Text
-                                    style={singleCarStyles.postCount}>{this.props.auto_data.post_count} объявлений</Text>
+                                    style={singleCarStyles.postCount}>{this.state.userData.products?.length} объявлений</Text>
                             </View>
                         </View>
 
@@ -299,7 +454,7 @@ export default class App extends Component {
 
                         <LinearGradient colors={['#34BE7C', '#2EB6A5']} style={singleCarStyles.callButton}>
                             <TouchableOpacity style={singleCarStyles.callButtonToch} onPress={() => {
-                                Linking.openURL('tel:' + this.props.auto_data.phone_number);
+                                Linking.openURL('tel:' + this.state.userData.number);
                             }}>
                                 <Text style={{color: 'white'}}>
                                     Позвонить

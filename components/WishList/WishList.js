@@ -2,92 +2,30 @@ import React, {Component, useState} from 'react';
 import {
     View,
     Platform,
-    TextInput, StyleSheet, StatusBar, Dimensions, ScrollView, Image, Text, TouchableOpacity, createStackNavigator,
-    Modal, TouchableHighlight, Alert
+    TextInput,
+    StyleSheet,
+    StatusBar,
+    Dimensions,
+    ScrollView,
+    Image,
+    Text,
+    TouchableOpacity,
+    createStackNavigator,
+    ActivityIndicator,
+    Modal,
+    TouchableHighlight,
+    Alert,
+    SafeAreaView,
+    FlatList
 } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import {wishhListStyles} from './WishListStyles';
+import {wishListStyles} from './WishListStyles';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {feedsStyles} from "../Feeds/feedsStyles";
 
-const desc = 'Идейные соображения высшего порядка, \n' +
-    'а также укрепление и развитие структуры \n' +
-    'играет важную роль в формировании \n' +
-    'модели развития.';
-
-const articleData = [
-    {
-        id: 1,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/1.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: [require('../../assets/img/cars/1.png'), require('../../assets/img/cars/3.png'), require('../../assets/img/cars/4.png')],
-        title: 'Аренда авто,под залог1',
-        price: '1 290 ₽',
-        address: 'Лиговский проспект 11',
-        date: 'Сегодня в 12:00'
-    },
-    {
-        id: 2,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/2.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог2',
-        price: '1 150 ₽',
-        address: 'Проспект Мира 22',
-        date: 'Сегодня в 13:45',
-        autoMark: 'Vollkswagen',
-        body_type: 'Седан',
-        yearOfIssue: '2021',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Дмитрий',
-        post_count: 10,
-        phone_number: '37477695677'
-    },
-    {
-        id: 3,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/3.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог3',
-        price: '1 250 ₽',
-        address: 'Проспект Мира 23',
-        date: 'Сегодня в 12:45',
-        autoMark: 'Mercedes',
-        body_type: 'Седан',
-        yearOfIssue: '2020',
-        transmission: 'Механика',
-        rull: 'Правый',
-        user_name: 'Артем',
-        post_count: 117,
-        phone_number: '37477695677'
-    },
-    {
-        id: 8,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/4.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог8',
-        price: '1 750 ₽',
-        address: 'Проспект Мира 28',
-        date: 'Сегодня в 7:45',
-        autoMark: 'Jaguar',
-        body_type: 'Седан',
-        yearOfIssue: '2016',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Александр',
-        post_count: 18,
-        phone_number: '37477695677'
-    },];
 
 const wishIcons = [
+    require('../../assets/img/addinwish.png'),
     require('../../assets/img/addinwishactive.png')
 ];
 
@@ -96,48 +34,106 @@ export default class wishListScreen extends Component {
 
     constructor(props) {
         super(props);
-        this.wishlist = [];
 
-        for (let i = 0; i < articleData.length; i++) {
-            if (articleData[i].wishlist === true) {
-                this.wishlist.push(articleData[i].id);
-            }
-        }
         this.state = {
-            wishlist: this.wishlist,
-            articleData: articleData
+            wishList: [],
+            wishListId: [],
         };
     }
 
 
-    onToggleArray = (item, index) => {
-        this.setState(state => {
-            const wishlist = state.wishlist.includes(item.id)
-                ? state.wishlist.filter(i => i !== item.id) // remove item
-                : [...state.wishlist, item.id]; // add item
+    getFavouriteItems = async () => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
 
-            return {
-                wishlist,
-            };
+            })
+                .then(res => res.json())
+                .then((res) => {
+                    this.setState({wishListId: res["0"].map((item) => item.id)});
+                    this.setState({wishList: res["0"]})
+                })
+                .catch((e) => {
+                    // console.log(e)
+                })
+        } catch (e) {
+            // console.log(e)
+        }
+    }
+
+    componentDidMount() {
+        this.focusListener = this.props.navigation.addListener("focus", () => {
+            this.getFavouriteItems();
         });
     }
 
-    handleRemoveWish = () => {
+    removeFromFavourites = async (itemID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch(`http://bowy.ru/api/favourites/${itemID}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+            })
+                .then((res) => res.json())
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
-       this.state.articleData.map(item => {
-            if (item.wishlist === false) {
-                delete item.item
-            }
-        })
-        this.setState({
-            articleData: articleData
-        })
-        console.log(this.state.articleData)
-
+    addToFavourites = async (userID, productID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+                body: JSON.stringify({user_id: userID, product_id: productID})
+            })
+                .then(res => res.json())
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
     }
 
 
-
+    // handleRemoveWish = () => {
+    //
+    //    this.state.articleData.map(item => {
+    //         if (item.wishlist === false) {
+    //             delete item.item
+    //         }
+    //     })
+    //     this.setState({
+    //         articleData: articleData
+    //     })
+    //     console.log(this.state.articleData)
+    //
+    // }
+    //
+    //
+    //
     openSingleCar = (data) => {
         this.props.navigation.navigate('SingleCar', {
             params: data,
@@ -147,11 +143,13 @@ export default class wishListScreen extends Component {
     render() {
 
         return (
-            <View style={wishhListStyles.wishhListScreenMainView}>
-                <View style={wishhListStyles.wishTitleWrapper}>
-                    <Text style={wishhListStyles.wishTitle}>
+            <View style={wishListStyles.wishListScreenMainView}>
+                <View style={wishListStyles.wishTitleWrapper}>
+
+                    <Text style={wishListStyles.wishTitle}>
                         Избранное
                     </Text>
+
                     <TouchableOpacity style={{
                         width: 30,
                         height: 30,
@@ -163,51 +161,74 @@ export default class wishListScreen extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <ScrollView style={wishhListStyles.scrollView}>
 
-                    {articleData.map((article, index) => (
-                        <View key={article.id} style={wishhListStyles.wishhListCaritems}>
+                <SafeAreaView style={wishListStyles.safeArea}>
 
-                            <View style={wishhListStyles.wishhListCarImgWrapper}>
-                                <Image style={wishhListStyles.wishhListCaritemsImg} source={article.image}/>
-                                <TouchableOpacity style={wishhListStyles.addinwish}
-                                                  onPress={() => this.onToggleArray(article)}>
+                    <FlatList
+                        data={this.state.wishList}
+                        renderItem={({item, index, separators}) => {
+                            return <View style={wishListStyles.feedsCaritems}>
 
-                                    <Image source={wishIcons[0]}/>
-                                </TouchableOpacity>
+
+                                <View style={wishListStyles.feedsCarImgWrapper}>
+                                    <Image style={wishListStyles.feedsCaritemsImg}
+                                           source={{uri: `http://bowy.ru/storage/uploads/${item.image}`}}/>
+                                    <TouchableOpacity style={wishListStyles.addinwish}
+                                                      onPress={() => {
+                                                          if (this.state.wishListId.includes(item.id)) {
+                                                              this.setState(prev => ({wishListId: prev.wishListId.filter(items => item.id !== items)}))
+                                                              this.removeFromFavourites(item.id)
+
+                                                          } else {
+                                                              this.addToFavourites(item.user_id, item.id)
+                                                              this.setState((prev) => ({wishListId: [...prev.wishListId, item.id]}))
+                                                          }
+
+
+                                                      }}>
+                                        <Image
+                                            source={this.state.wishListId.includes(item.id) ? wishIcons[1] : wishIcons[0]}/>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={wishListStyles.feedsCarItemRight}>
+
+                                    <TouchableOpacity onPress={() => this.openSingleCar(item)}>
+                                        <Text style={{
+                                            fontSize: 14,
+                                            fontWeight: '700',
+                                            color: '#424A55',
+                                            marginBottom: 10
+                                        }}>{item.headline}</Text>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 13
+                                        }}>{item.price}</Text>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 5
+                                        }}>{item.address}</Text>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 5
+                                        }}>
+                                            {item.updated_at.split("").slice(0, 10).join("")}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                        }}
+                        keyExtractor={item => item.id}
+                    />
+                </SafeAreaView>
 
-                            <View style={wishhListStyles.wishhListCarItemRight}>
-                                <TouchableOpacity onPress={() => this.openSingleCar(article)}>
-                                    <Text style={{
-                                        fontSize: 14,
-                                        fontWeight: '700',
-                                        color: '#424A55',
-                                        marginBottom: 10
-                                    }}>{article.title}</Text>
-                                    <Text style={{
-                                        fontSize: 12,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 13
-                                    }}>{article.price}</Text>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 5
-                                    }}>{article.address}</Text>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 5
-                                    }}>{article.date}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))}
-                </ScrollView>
+
             </View>
         )
     }

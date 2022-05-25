@@ -46,7 +46,6 @@ const addCarStyle = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#AFB7C5',
         borderRadius: 10,
-        marginTop: 40,
 
     },
     imagePickerIcon: {
@@ -60,7 +59,6 @@ const addCarStyle = StyleSheet.create({
     pickedPhotoStyle: {
         width: 250,
         height: 100,
-        marginTop: 40,
         marginLeft: 10,
         zIndex: 1,
 

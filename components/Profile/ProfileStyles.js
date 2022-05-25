@@ -1,4 +1,4 @@
-import { Dimensions, StatusBar, StyleSheet} from 'react-native'
+import {Dimensions, StatusBar, StyleSheet} from 'react-native'
 
 const ProfileStyles = StyleSheet.create({
     container: {
@@ -6,82 +6,79 @@ const ProfileStyles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight,
     },
     scrollView: {
-        paddingLeft:22,
-        paddingRight:22,
+        paddingHorizontal: 22
     },
     text: {
         fontSize: 42,
     },
-    profileScreenMainView:{
+    profileScreenMainView: {
         flex: 1,
         // width: Dimensions.get('window').width,
-        paddingTop: StatusBar.currentHeight+23,
+        paddingTop: StatusBar.currentHeight + 23,
         alignItems: 'center',
         justifyContent: 'flex-start',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        zIndex: 1
 
     },
     profileCaritems: {
         height: 125,
         alignSelf: 'stretch',
-        width:Dimensions.get('window').width,
-        marginBottom:20,
+        width: Dimensions.get('window').width,
+        marginBottom: 20,
         flex: 1,
         flexDirection: 'row',
-        borderRadius:13,
-        overflow:'hidden'
+        borderRadius: 13,
+        overflow: 'hidden'
     },
-    profileCarImgWrapper: {
-    },
-    profileCaritemsImg: {
-
-    },
+    profileCarImgWrapper: {},
+    profileCaritemsImg: {},
     profileCarItemRight: {
-        padding:15
+        padding: 15
     },
     addinwish: {
-        position:'absolute',
+        position: 'absolute',
         width: 28,
         height: 28,
-        right:10,
-        bottom:10,
+        right: 10,
+        bottom: 10,
         zIndex: 1,
     },
     textInputStyle: {
-        height:40,
-        flex:1,
-        color:'#424A55'
+        height: 40,
+        flex: 1,
+        color: '#424A55'
     },
     textInputWrapperStyle: {
         width: Dimensions.get('window').width,
-        paddingLeft:20,
-        paddingRight:20,
-        marginBottom:30,
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginBottom: 30,
     },
     textInputContainerStyle: {
         backgroundColor: '#F0F4F8',
         borderRadius: 16,
         overflow: 'hidden',
-        paddingLeft:12,
-        paddingRight:17,
+        paddingLeft: 12,
+        paddingRight: 17,
         justifyContent: 'flex-start',
         alignSelf: 'stretch',
         alignItems: 'center',
         flexDirection: 'row',
     },
     textInputImg: {
-        width:20,
-        height:20,
+        width: 20,
+        height: 20,
         marginRight: 16
     },
     textInputImgFilterIcon: {
-        width:20,
-        height:17,
+        width: 20,
+        height: 17,
         marginLeft: 17
     },
     searchLine: {
-        width:2,
-        height:24,
+        width: 2,
+        height: 24,
         backgroundColor: '#DAE1EC',
         marginLeft: 17
     },
@@ -91,12 +88,12 @@ const ProfileStyles = StyleSheet.create({
         marginLeft: 22,
     },
     modalContainer2: {
-        width:"100%",
+        width: "100%",
         justifyContent: 'space-between',
         alignSelf: 'stretch',
         alignItems: 'center',
         flexDirection: 'row',
-        marginBottom:38
+        marginBottom: 38
     },
     modalContainerTitle: {
         fontSize: 18,
@@ -104,46 +101,46 @@ const ProfileStyles = StyleSheet.create({
         fontWeight: 'bold'
     },
     closeModal: {
-        width:24,
-        height:24
+        width: 24,
+        height: 24
     },
 
     filterSearchButton: {
-        width:'100%',
-        height:50,
+        width: '100%',
+        height: 50,
         backgroundColor: 'green',
-        color:'white',
+        color: 'white',
         justifyContent: 'center',
-        alignItems:'center',
-        borderRadius:8
+        alignItems: 'center',
+        borderRadius: 8
     },
     sortByWrapper: {
-        width:'100%',
+        width: '100%',
         height: 169,
-        marginTop:20,
-        backgroundColor:'#F0F4F8',
-        borderRadius:10,
+        marginTop: 20,
+        backgroundColor: '#F0F4F8',
+        borderRadius: 10,
         padding: 15
     },
     filterFieldsWrapper: {
-        marginBottom:59
+        marginBottom: 59
     },
     minMaxPriceWrapper: {
-        width:'100%',
+        width: '100%',
         height: 96,
-        marginTop:20,
-        backgroundColor:'#F0F4F8',
-        borderRadius:10,
-        paddingLeft:15,
-        paddingRight:15,
+        marginTop: 20,
+        backgroundColor: '#F0F4F8',
+        borderRadius: 10,
+        paddingLeft: 15,
+        paddingRight: 15,
     },
-    minPriceWrapper:{
-        height:48,
+    minPriceWrapper: {
+        height: 48,
         borderBottomColor: "#a2abc25c",
         borderBottomWidth: 1
     },
     maxPriceWrapper: {
-        height:48
+        height: 48
     },
     rbWrapper: {
         marginBottom: 21,
@@ -165,7 +162,7 @@ const ProfileStyles = StyleSheet.create({
         borderColor: '#8B94A3',
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight:12
+        marginRight: 12
     },
     selected: {
         width: 4,
@@ -179,92 +176,91 @@ const ProfileStyles = StyleSheet.create({
         fontWeight: '600',
         backgroundColor: 'blue',
     },
-    sortByTitile:{
+    sortByTitile: {
         color: "#A7AEBA",
         fontSize: 11,
         marginBottom: 17
     },
 
-    prifileTitleWrapper:{
+    profileTitleWrapper: {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width:'100%',
-        paddingLeft:23,
-        paddingRight:20,
-        marginBottom:30
+        width: '100%',
+        paddingLeft: 23,
+        paddingRight: 20,
+        marginBottom: 20
     },
-    wishTitle:{
-        fontSize:24,
-        color:'#424A55',
-        fontWeight:'bold'
+    wishTitle: {
+        fontSize: 24,
+        color: '#424A55',
+        fontWeight: 'bold',
+        zIndex: 1
     },
 
     returnBack: {
-        width:20,
+        width: 20,
         height: 16
     },
-     profileNot: {
-        width:20,
+    profileNot: {
+        width: 20,
         height: 21
     },
-    profileSetting : {
-        width:19,
+    profileSetting: {
+        width: 19,
         height: 20
     },
-    profilePhoto : {
-        width:80,
+    profilePhoto: {
+        width: 80,
         height: 80
     },
-    profilePhotoWrapper:{
-        marginRight:25
+    profilePhotoWrapper: {
+        marginRight: 25
     },
-    userName:{
+    userName: {
         width: '90%',
-        fontSize:18,
-        color:'#424A55',
-        marginBottom:8
+        fontSize: 18,
+        color: '#424A55',
+        marginBottom: 8
     },
-    profileCall : {
-        width:15,
+    profileCall: {
+        width: 15,
         height: 15,
-        marginRight:17
+        marginRight: 17
     },
-    profileMail : {
-        width:16,
+    profileMail: {
+        width: 16,
         height: 15,
-        marginRight:17
+        marginRight: 17
     },
-    profileLocation : {
-        width:15,
+    profileLocation: {
+        width: 15,
         height: 18,
-        marginRight:17
+        marginRight: 17
     },
 
-    profile:{
-
-    },
+    profile: {},
 
     profileInfoWrapper: {
-        width:"100%",
-        height:144,
-        paddingLeft:22,
-        paddingRight:22,
-        marginBottom:40
+        width: "100%",
+        height: 144,
+        paddingLeft: 22,
+        paddingRight: 22,
+        marginBottom: 30
     },
 
     profileInfo: {
-        width:"100%",
-        height:160,
-        backgroundColor:'#F0F4F8',
-        padding:22,
-        borderRadius:10,
+        width: "100%",
+        height: 160,
+        backgroundColor: '#F0F4F8',
+        padding: 22,
+        borderRadius: 10,
     },
 
     userInfoItem: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginBottom:27,
+        marginBottom: 27,
 
     },
 
@@ -272,56 +268,56 @@ const ProfileStyles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        marginBottom:30,
-        width:'100%',
-        paddingLeft:22,
-        paddingRight:22,
+        marginBottom: 20,
+        width: '100%',
+        paddingLeft: 22,
+        paddingRight: 22,
+        zIndex: 1
     },
-    profileUserInfoTwoWrapper:{
-
-    },
-    profileUserInfoTwo:{
+    profileUserInfoTwoWrapper: {},
+    profileUserInfoTwo: {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'flex-start',
+        zIndex: 1
     },
-    profileNumberLabel:{
-        color:'#818B9B',
-        fontSize:14,
-        marginRight:15
+    profileNumberLabel: {
+        color: '#818B9B',
+        fontSize: 14,
+        marginRight: 15
     },
-    profileNumber:{
-        fontSize:14,
-        color:"#424A55"
+    profileNumber: {
+        fontSize: 14,
+        color: "#424A55"
     },
-    tabsWrapper:{
+    tabsWrapper: {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'flex-start',
-        width:'100%',
-        paddingLeft:22,
-        paddingRight:22,
-        marginBottom:28
+        width: '100%',
+        paddingLeft: 22,
+        paddingRight: 22,
+        marginBottom: 20
     },
-    tabWrapper:{
+    tabWrapper: {
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
-        width:'50%',
-        flexWrap:'wrap',
-        height:40,
+        width: '50%',
+        flexWrap: 'wrap',
+        height: 40,
     },
-    tabLabel:{
-        color:"#818B9B",
-        marginBottom:10,
-        width:'100%',
-        textAlign:"center",
+    tabLabel: {
+        color: "#818B9B",
+        marginBottom: 10,
+        width: '100%',
+        textAlign: "center",
     },
-    tabLine:{
-        width:40,
-        height:3,
-        backgroundColor:"#2EB6A5",
-        marginTop:10
+    tabLine: {
+        width: 40,
+        height: 3,
+        backgroundColor: "#2EB6A5",
+        marginTop: 10
     },
     carsInfo: {
         fontSize: 14,
@@ -329,7 +325,7 @@ const ProfileStyles = StyleSheet.create({
         color: '#424A55',
         marginBottom: 10,
     },
-    refactorInput:{
+    refactorInput: {
         borderWidth: 1,
         borderColor: 'black',
         borderRadius: 3,
@@ -338,6 +334,41 @@ const ProfileStyles = StyleSheet.create({
         maxWidth: 200,
         marginBottom: 5,
         padding: 3
+    },
+    modalView: {
+        paddingTop: 20,
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "60%",
+        height: 300,
+        backgroundColor: "#F0F4F8",
+        borderRadius: 10,
+        alignSelf: 'flex-end',
+        // opacity: 0.7,
+        marginTop: 100
+
+
+    },
+    changeUserData: {
+        alignItems: "center",
+        color: "white"
+    },
+
+
+
+
+
+
+    settingView:{
+        width: 170,
+        height: 70,
+        borderRadius: 5,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: '#F0F4F8',
+        position: "absolute",
+        right: 15,
+        zIndex: 10
     }
 
 });

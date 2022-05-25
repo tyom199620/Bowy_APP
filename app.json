@@ -7,7 +7,7 @@
       "**/*"
     ],
     "splash": {
-      "image": "./assets/img/loader.png",
+      "image": "./assets/img/bowylogo.png",
       "resizeMode": "cover"
     },
     "android": {

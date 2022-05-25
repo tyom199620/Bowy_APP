@@ -123,6 +123,17 @@ const singleCarStyles = StyleSheet.create({
         color:'#34BE7C',
         fontSize:12,
         fontWeight:'bold'
+    },
+    settingView:{
+        width: 170,
+        height: 70,
+        borderRadius: 5,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "white",
+        position: "absolute",
+        right: 10,
+        zIndex: 10
     }
 
 });

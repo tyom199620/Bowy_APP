@@ -10,6 +10,9 @@ import {
     Dimensions,
     Alert
 } from 'react-native';
+
+
+
 import {NavigationContainer, getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import WishListComponent from './components/WishList/WishList';
@@ -20,6 +23,7 @@ import SingleCarComponent from './components/SingleCar/SingleCarScreen';
 import ProfileComponent from './components/Profile/ProfileScreen';
 import ChatComponent from './components/Chats/Chat';
 import AddCarComponent from "./components/AddCar/AddCar";
+import EditPassword from "./components/EditPassword/EditPassword"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {AuthContext} from './components/AuthContext/context';
 import { StackActions } from '@react-navigation/native';
@@ -34,6 +38,7 @@ import EditCarComponent from "./components/EditCar/EditCarScreen";
 
 import {LinearGradient} from 'expo-linear-gradient';
 import {useEffect} from "react";
+import editPassword from "./components/EditPassword/EditPassword";
 
 
 function SettingsScreen({route, navigation}) {
@@ -136,6 +141,7 @@ function SingleMessageScreen({navigation}) {
 
 export default function App() {
     const popAction = StackActions.pop(1);
+
 
     const [isLoading, setIsLoading] = React.useState(true);
     const [userToken, setUserToken] = React.useState(null);
@@ -346,6 +352,13 @@ export default function App() {
                                     })}
                         />
                         <Tab.Screen name="Register" component={RegisterScreen}
+                                    options={({route}) => ({
+                                        tabBarButton: () => null,
+                                        tabBarStyle: {display: 'none'}
+                                    })}
+                        />
+
+                        <Tab.Screen name="EditPassword" component={EditPassword}
                                     options={({route}) => ({
                                         tabBarButton: () => null,
                                         tabBarStyle: {display: 'none'}

@@ -1,4 +1,3 @@
-
 import React, {Component} from 'react';
 import {
     Text,
@@ -13,8 +12,6 @@ import {
 } from 'react-native';
 
 import {LinearGradient} from 'expo-linear-gradient';
-
-
 
 
 export default class App extends Component {
@@ -33,7 +30,7 @@ export default class App extends Component {
             email_error: null,
             phone_error: null,
             password_error: null,
-            confirm_password_error: null,
+            password_confirmation_error: null,
             successMessage: null
 
 
@@ -49,15 +46,13 @@ export default class App extends Component {
     handleRegistration = async () => {
         let {name, password, email, number, password_confirmation} = this.state;
 
-        let req = {name: name, password: password, email: email, number: number, password_confirmation: password_confirmation}
-
-        if (password !== password_confirmation) {
-            this.setState({
-                confirm_password_error: true
-            })
-            return false;
+        let req = {
+            name: name,
+            password: password,
+            email: email,
+            number: number,
+            password_confirmation: password_confirmation
         }
-
 
 
         try {
@@ -66,35 +61,45 @@ export default class App extends Component {
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
-                    // req
                 },
-                body: JSON.stringify({
-                    name: name,
-                    password: password,
-                    email: email,
-                    number: number,
-                    password_confirmation: password_confirmation
-                })
+                body: JSON.stringify(req)
             })
                 .then((response) => {
                     return response.json();
                 })
                 .then((response) => {
-                    if (response.data?.name || response.data?.email || response.data?.number || response.data?.password || response.data?.password_confirmation) {
-                        this.setState({
-                            name_error: response.data?.name?.join(""),
-                            email_error: response.data?.email?.join(""),
-                            phone_error: response.data?.number?.join(""),
-                            password_error: response.data?.password?.join(""),
-                            confirm_password_error: response.data?.password_confirmation?.join("")
-                        })
-                    } else {
-                        this.setState({
-                            name_error: null,
-                            email_error: null,
-                            phone_error: null,
-                            password_error: null,
-                        })
+                    console.log(response)
+
+                    if (response.data) {
+                        if (response.data.name) {
+                            this.setState({name_error: response.data.name[0]})
+                        } else {
+                            this.setState({name_error: null,})
+                        }
+
+                        if (response.data.email) {
+                            this.setState({email_error: response.data.email[0]})
+                        } else {
+                            this.setState({email_error: null,})
+                        }
+
+                        if (response.data.number) {
+                            this.setState({phone_error: response.data.number[0]})
+                        } else {
+                            this.setState({phone_error: null,})
+                        }
+
+                        if (response.data.password) {
+                            this.setState({password_error: response.data.password[0]})
+                        } else {
+                            this.setState({password_error: null,})
+                        }
+
+                        if (response.data.password_confirmation) {
+                            this.setState({password_confirmation_error: response.data.password_confirmation[0]})
+                        } else {
+                            this.setState({password_confirmation_error: null,})
+                        }
                     }
 
 
@@ -106,128 +111,28 @@ export default class App extends Component {
                             password: '',
                             password_confirmation: '',
                             successMessage: true,
+
+                            name_error: null,
+                            email_error: null,
+                            phone_error: null,
+                            password_error: null,
+                            password_confirmation_error: null
                         })
 
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             this.props.navigation.navigate('Login')
                             this.setState({successMessage: false})
                         }, 2000)
                     }
+                })
+                .catch(e => {
+                    console.log(e)
                 })
         } catch (error) {
             console.log(error, 'Catch error');
         }
     }
 
-
-    // changeBox = () => {
-    //     let api = fetch
-    //     let url = `http://bowy.ru/api/registration`;
-    //     let {name, password, email, confirm_password, number} = this.state;
-    //     try {
-    //         let userToken = AsyncStorage.getItem('userToken');
-    //         let AuthStr = 'Bearer ' + userToken;
-    //         api(url, {
-    //                 method: "POST",
-    //                 headers: {
-    //                     'Authorization': AuthStr,
-    //                     'Accept': 'application/json',
-    //                     'Content-Type': 'application/json',
-    //                     name: name,
-    //                     password: password,
-    //                     email: email,
-    //                     confirm_password: confirm_password,
-    //                     number: number,
-    //                 },
-    //                 body: JSON.stringify({name, password, confirm_password, email, number})
-    //             }
-    //         ).then((response) => {
-    //             return JSON.parse(response)
-    //         })
-    //             .then((response) => {
-    //                 console.log(response, 'then resp')
-    //             })
-    //     } catch (error) {
-    //         console.log(error, 'Catch error');
-    //
-    //     }
-    // }
-
-
-    // handleRegistration = () => {
-    //     let {fioFlag, emailFlag, numberFlag, passwordFlag, confirmPasswordFlag, registered} = this.state;
-    //
-    //     //  const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    //     if (this.state.email < 6) {
-    //         this.setState({
-    //             emailFlag: true
-    //         })
-    //     } else {
-    //         this.setState({
-    //             emailFlag: false
-    //         })
-    //     }
-    //     // const number = /^[0-9\-\+]{9,15}$/
-    //     if (this.state.number < 6) {
-    //         this.setState({
-    //             numberFlag: true
-    //         })
-    //     } else {
-    //         this.setState({
-    //             numberFlag: false
-    //         })
-    //     }
-    //     let {password} = this.state;
-    //     if (password.length < 6) {
-    //         this.setState({
-    //             passwordFlag: true
-    //         })
-    //
-    //     } else {
-    //         this.setState({
-    //             passwordFlag: false
-    //         })
-    //     }
-    //     if (this.state.confirm_password === '' || this.state.password !== this.state.confirm_password) {
-    //         this.setState({
-    //             confirmPasswordFlag: true
-    //         })
-    //     } else {
-    //         this.setState({
-    //             confirmPasswordFlag: false
-    //         })
-    //     }
-    //
-    //     if (this.state.name.length < 5) {
-    //         this.setState({
-    //             fioFlag: true
-    //         })
-    //
-    //     } else {
-    //         this.setState({
-    //             fioFlag: false
-    //         })
-    //     }
-    //
-    //
-    //     if (!emailFlag && !passwordFlag && !fioFlag && !numberFlag && !confirmPasswordFlag) {
-    //         this.setState({
-    //             registered: true,
-    //
-    //         })
-    //         this.changeBox()
-    //         this.goToFeeds()
-    //
-    //     } else {
-    //         alert("Заполните все поля")
-    //         this.setState({
-    //             registered: false,
-    //
-    //         })
-    //     }
-    //     // console.log(registered)
-    //
-    // }
 
     //
     // goToFeeds = () => {
@@ -256,7 +161,7 @@ export default class App extends Component {
             email_error: null,
             phone_error: null,
             password_error: null,
-            confirm_password_error: null,
+            password_confirmation_error: null
         })
 
         this.props.navigation.navigate('Login');
@@ -294,7 +199,12 @@ export default class App extends Component {
                     :
                     <View>
 
-                        <Text style={{color: 'red', fontSize: 10, marginBottom: 10, textAlign: "center"}}>{this.state.name_error}</Text>
+                        <Text style={{
+                            color: 'red',
+                            fontSize: 10,
+                            marginBottom: 3,
+                            alignSelf: 'flex-start'
+                        }}>{this.state.name_error}</Text>
                         <TextInput
                             value={this.state.name}
                             onChangeText={(name) => this.setState({name})}
@@ -316,7 +226,12 @@ export default class App extends Component {
                     /> :
                     <View>
 
-                        <Text style={{color: 'red', fontSize: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.email_error}</Text>
+                        <Text style={{
+                            color: 'red',
+                            fontSize: 10,
+                            marginBottom: 3,
+                            alignSelf: 'flex-start'
+                        }}>{this.state.email_error}</Text>
                         <TextInput
                             value={this.state.email}
                             onChangeText={(email) => this.setState({email})}
@@ -338,7 +253,12 @@ export default class App extends Component {
                         underlineColorAndroid="transparent"
                     /> :
                     <View>
-                        <Text style={{color: 'red', fontSize: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.phone_error}</Text>
+                        <Text style={{
+                            color: 'red',
+                            fontSize: 10,
+                            marginBottom: 3,
+                            alignSelf: 'flex-start'
+                        }}>{this.state.phone_error}</Text>
                         <TextInput
                             value={this.state.number}
                             onChangeText={(number) => this.setState({number})}
@@ -362,7 +282,12 @@ export default class App extends Component {
                         placeholder="Пароль"
                     /> :
                     <View>
-                        <Text style={{color: 'red', fontSize: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.password_error}</Text>
+                        <Text style={{
+                            color: 'red',
+                            fontSize: 10,
+                            marginBottom: 3,
+                            alignSelf: 'flex-start'
+                        }}>{this.state.password_error}</Text>
                         <TextInput
                             value={this.state.password}
                             onChangeText={(password) => this.setState({password})}
@@ -373,7 +298,9 @@ export default class App extends Component {
                             placeholder="Пароль"
                         />
                     </View>}
-                {!this.state.confirm_password_error ?
+
+
+                {!this.state.password_confirmation_error ?
                     <TextInput
                         value={this.state.password_confirmation}
                         onChangeText={(password_confirmation) => this.setState({password_confirmation})}
@@ -384,7 +311,12 @@ export default class App extends Component {
                         placeholder="Повторить пароль"
                     /> :
                     <View>
-                        <Text style={{color: 'red', fontSize: 10, marginBottom: 10, textAlign: 'center'}}>{this.state.confirm_password_error}</Text>
+                        <Text style={{
+                            color: 'red',
+                            fontSize: 10,
+                            marginBottom: 3,
+                            alignSelf: 'flex-start'
+                        }}>{this.state.password_confirmation_error}</Text>
                         <TextInput
                             value={this.state.password_confirmation}
                             onChangeText={(password_confirmation) => this.setState({password_confirmation})}
@@ -433,7 +365,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#f0f4f8',
     },
-    success:{
+    success: {
         color: "green",
         fontSize: 20,
         marginBottom: 25,

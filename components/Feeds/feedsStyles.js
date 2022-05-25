@@ -1,5 +1,3 @@
-
-
 import { Dimensions, StatusBar, StyleSheet} from 'react-native'
 
 const feedsStyles = StyleSheet.create({
@@ -7,8 +5,10 @@ const feedsStyles = StyleSheet.create({
         flex: 1,
         paddingTop: StatusBar.currentHeight,
     },
-    scrollView: {
+    safeArea: {
         marginHorizontal: 23,
+        marginTop: 30
+
     },
     text: {
         fontSize: 42,
@@ -16,7 +16,7 @@ const feedsStyles = StyleSheet.create({
     feedsScreenMainView:{
         flex: 1,
         // width: Dimensions.get('window').width,
-        paddingTop: StatusBar.currentHeight+23,
+        paddingTop: StatusBar.currentHeight+40,
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'white'
@@ -26,7 +26,7 @@ const feedsStyles = StyleSheet.create({
         height: 125,
         alignSelf: 'stretch',
         width:Dimensions.get('window').width,
-        marginBottom:20,
+        marginBottom:30,
         flex: 1,
         flexDirection: 'row',
         borderRadius:13,
@@ -35,6 +35,8 @@ const feedsStyles = StyleSheet.create({
     feedsCarImgWrapper: {
     },
     feedsCaritemsImg: {
+        width: 170,
+        height: 130,
 
     },
     feedsCarItemRight: {
@@ -49,15 +51,16 @@ const feedsStyles = StyleSheet.create({
         zIndex: 1,
     },
     textInputStyle: {
-        height:40,
+        height: 45,
         flex:1,
         color:'#424A55'
     },
     textInputWrapperStyle: {
         width: Dimensions.get('window').width,
-        paddingLeft:20,
-        paddingRight:20,
-        marginBottom:30,
+        paddingHorizontal: 20,
+        marginBottom: 20,
+        position: "absolute",
+        top: 35,
     },
     textInputContainerStyle: {
         backgroundColor: '#F0F4F8',
@@ -122,7 +125,6 @@ const feedsStyles = StyleSheet.create({
     sortByWrapper: {
         width:'100%',
         height: 210,
-        marginTop:20,
         backgroundColor:'#F0F4F8',
         borderRadius:10,
         padding: 15
@@ -204,6 +206,18 @@ const feedsStyles = StyleSheet.create({
         color: "#A7AEBA",
         fontSize: 11,
         marginBottom: 17
+    },
+    category1:{
+        borderRadius: 15,
+        marginBottom: 25,
+        zIndex: 10
+    },
+
+    costCategory:{
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        backgroundColor: '#F0F4F8',
+
     }
 
 });

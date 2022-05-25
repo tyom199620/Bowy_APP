@@ -2902,9 +2902,9 @@
   "version" "6.2.1"
 
 "caniuse-lite@^1.0.30001280":
-  "integrity" "sha512-t28SKa7g6kiIQi6NHeOcKrOrGMzCRrXvlasPwWC26TH2QNdglgzQIRUuJ0cR3NeQPH+5jpuveeeSFDLm2zbkEw=="
-  "resolved" "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001284.tgz"
-  "version" "1.0.30001284"
+  "integrity" "sha512-bn6sOCu7L7jcbBbyNhLg0qzXdJ/PMbybZTH/BA6Roet9wxYRm6Tr9D0s0uhLkOZ6MSG+QU6txUgdpr3MXIVqjA=="
+  "resolved" "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001342.tgz"
+  "version" "1.0.30001342"
 
 "capture-exit@^2.0.0":
   "integrity" "sha512-PiT/hQmTonHhl/HFGN+Lx3JJUznrVYJ3+AQsnthneZbvW7x+f08Tk7yLJTLEOUvBTbduLeeBkxEaYXUOUrRq6g=="
@@ -6316,10 +6316,10 @@
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
 
-"react-native-image-slider-box@^1.1.13":
-  "integrity" "sha512-SHAJnPrCDRDLLp7DLs4qB0sJDrdJS7OIKRFs3b/MokG2gRqgyqZdAvRy+bIlpuA9kLCJp7c4QHlfPcoEE9uSOQ=="
-  "resolved" "https://registry.npmjs.org/react-native-image-slider-box/-/react-native-image-slider-box-1.1.20.tgz"
-  "version" "1.1.20"
+"react-native-image-slider-box@^1.1.22":
+  "integrity" "sha512-NbFwPc3w5ZgtSBb0mo0cJmLlgeBd+BaQo1qCnH6/JNldGW1bO5iErmyojUFajW/yS9TvFLGXMhWzTIvkRgxYAg=="
+  "resolved" "https://registry.npmjs.org/react-native-image-slider-box/-/react-native-image-slider-box-1.1.22.tgz"
+  "version" "1.1.22"
   dependencies:
     "react-native-snap-carousel" "latest"
 
@@ -6411,7 +6411,7 @@
   dependencies:
     "xmldom" "^0.1.22"
 
-"react-native-svg@^12.1.0", "react-native-svg@^12.1.1", "react-native-svg@^5.3.0", "react-native-svg@12.1.0":
+"react-native-svg@^12.1.0", "react-native-svg@^12.3.0", "react-native-svg@^5.3.0", "react-native-svg@12.1.0":
   "integrity" "sha512-ESG1g1j7/WLD7X3XRFTQHVv0r6DpbHNNcdusngAODIxG88wpTWUZkhcM3A2HJTb+BbXTFDamHv7FwtRKWQ/ALg=="
   "resolved" "https://registry.npmjs.org/react-native-svg/-/react-native-svg-12.3.0.tgz"
   "version" "12.3.0"

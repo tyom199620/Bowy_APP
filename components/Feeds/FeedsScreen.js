@@ -2,176 +2,15 @@ import React, {Component, useState} from 'react';
 
 import {
     View, Platform, TextInput, StyleSheet, StatusBar, Dimensions, ScrollView, Image,
-    Text, TouchableOpacity, createStackNavigator, Modal, TouchableHighlight, Alert,
+    Text, TouchableOpacity, createStackNavigator, Modal, TouchableHighlight, Alert, FlatList, SafeAreaView
 } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
-import DropDownPicker from "react-native-custom-dropdown";
+import DropDownPicker from 'react-native-dropdown-picker';
 
-import Icon from 'react-native-vector-icons/Feather';
-import RangeSlider, {Slider} from 'react-native-range-slider-expo';
 
 import {feedsStyles} from './feedsStyles';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const desc = 'Идейные соображения высшего порядка, \n' +
-    'а также укрепление и развитие структуры \n' +
-    'играет важную роль в формировании \n' +
-    'модели развития.';
-
-const articleData = [
-    {
-        id: 1,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/1.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: [require('../../assets/img/cars/1.png'), require('../../assets/img/cars/3.png'), require('../../assets/img/cars/4.png')],
-        title: 'Аренда авто,под залог1',
-        price: '1 290 ₽',
-        address: 'Лиговский проспект 11',
-        date: 'Сегодня в 12:00'
-    },
-    {
-        id: 2,
-        wishlist: false,
-        description: desc,
-        image: require('../../assets/img/cars/2.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог2',
-        price: '1 150 ₽',
-        address: 'Проспект Мира 22',
-        date: 'Сегодня в 13:45',
-        autoMark: 'Vollkswagen',
-        body_type: 'Седан',
-        yearOfIssue: '2021',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Дмитрий',
-        post_count: 10,
-        phone_number: '37477695677'
-    },
-    {
-        id: 3,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/3.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог3',
-        price: '1 250 ₽',
-        address: 'Проспект Мира 23',
-        date: 'Сегодня в 12:45',
-        autoMark: 'Mercedes',
-        body_type: 'Седан',
-        yearOfIssue: '2020',
-        transmission: 'Механика',
-        rull: 'Правый',
-        user_name: 'Артем',
-        post_count: 117,
-        phone_number: '37477695677'
-    },
-    {
-        id: 4,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/4.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог4',
-        price: '1 350 ₽',
-        address: 'Проспект Мира 24',
-        date: 'Сегодня в 11:45',
-        autoMark: 'BMW',
-        body_type: 'Седан',
-        yearOfIssue: '2019',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Сергей',
-        post_count: 13,
-        phone_number: '37477695677'
-    },
-    {
-        id: 5,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/1.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог5',
-        price: '1 450 ₽',
-        address: 'Проспект Мира 25',
-        date: 'Сегодня в 10:45',
-        autoMark: 'Mitsubishi',
-        body_type: 'Седан',
-        yearOfIssue: '2021',
-        transmission: 'Механика',
-        rull: 'Правый',
-        user_name: 'Виталий',
-        post_count: 15,
-        phone_number: '37477695677'
-    },
-    {
-        id: 6,
-        wishlist: false,
-        description: desc,
-        image: require('../../assets/img/cars/2.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог6',
-        price: '1 550 ₽',
-        address: 'Проспект Мира 26',
-        date: 'Сегодня в 9:45',
-        autoMark: 'Kia',
-        body_type: 'Седан',
-        yearOfIssue: '2018',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Петр',
-        post_count: 177,
-        phone_number: '37477695677'
-    },
-    {
-        id: 7,
-        wishlist: true,
-        description: desc,
-        image: require('../../assets/img/cars/3.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог7',
-        price: '1 650 ₽',
-        address: 'Проспект Мира 27',
-        date: 'Сегодня в 8:45',
-        autoMark: 'Opel',
-        body_type: 'Седан',
-        yearOfIssue: '2017',
-        transmission: 'Механика',
-        rull: 'Правый',
-        user_name: 'Анна',
-        post_count: 19,
-        phone_number: '37477695677'
-    },
-    {
-        id: 8,
-        wishlist: false,
-        description: desc,
-        image: require('../../assets/img/cars/4.png'),
-        userImage: require('../../assets/img/user.png'),
-        slider: ["https://source.unsplash.com/1024x768/?nature", "https://source.unsplash.com/1024x768/?water", "https://source.unsplash.com/1024x768/?girl", "https://source.unsplash.com/1024x768/?tree"],
-        title: 'Аренда авто,под залог8',
-        price: '1 750 ₽',
-        address: 'Проспект Мира 28',
-        date: 'Сегодня в 7:45',
-        autoMark: 'Jaguar',
-        body_type: 'Седан',
-        yearOfIssue: '2016',
-        transmission: 'Автоматическая',
-        rull: 'Левый',
-        user_name: 'Александр',
-        post_count: 18,
-        phone_number: '37477695677'
-    },
-];
 
 const wishIcons = [
     require('../../assets/img/addinwish.png'),
@@ -203,47 +42,194 @@ export default class FeedsScreenComponent extends Component {
     constructor(props) {
         super(props);
 
-        this.wishlist = [];
 
-        for (let i = 0; i < articleData.length; i++) {
-            if (articleData[i].wishlist === true) {
-                this.wishlist.push(articleData[i].id);
-            }
-        }
         this.state = {
-            wishlist: this.wishlist,
+            wishListId: [],
             filterModalVisible: false,
             filterSortBy: null,
             filterCategory: null,
             locationCity: null,
-            value: 0,
+
+
+            carCategoryOpen: false,
+            carCategoryValue: null,
+            carCategoryItems: [],
+
+            regionCategoryOpen: false,
+            regionCategoryValue: null,
+            regionCategoryItems: [],
+
+            cityListOpen: false,
+            cityListValue: null,
+            cityListItems: [],
+
 
             products: [],
+            products1: [],
+
+            usersID: [],
+            loggedUserID: "",
+            searchValue: "",
         };
     }
 
-    // getProducts = async () => {
-    //     try {
-    //         let userToken = await AsyncStorage.getItem('userToken');
-    //         let AuthStr = 'Bearer ' + userToken;
-    //
-    //
-    //         fetch('http://185.46.11.159/BowyLaravel/public/api/products', {
-    //             method: "GET",
-    //
-    //         })
-    //             .then((response) => {
-    //                 console.log(response, 'resp')
-    //             this.setState({
-    //                 products: response
-    //             })
-    //         })}catch (e){
-    //         /////////////
-    //     }
-    // }
 
-    componentDidMount() {
-        //  this.getProducts().then(r => console.log('OK'))
+
+    getFavouriteItems = async () => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+
+            })
+                .then(res => res.json())
+                .then(res => {
+                    this.setState({wishListId: res["0"].map((item) => item.id)});
+                })
+                .catch((e)=>{
+                    console.log("errrrrrror")
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    addToFavourites = async (userID, productID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch("http://bowy.ru/api/favourites", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+                body: JSON.stringify({user_id: userID, product_id: productID})
+            })
+                .then(res => res.json())
+                .then((res) => {
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    removeFromFavourites = async (itemID) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch(`http://bowy.ru/api/favourites/${itemID}`, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                },
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    console.log(res)
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    getProducts = async () => {
+        try {
+
+            let userID = await AsyncStorage.getItem("loggedUserID")
+            let userToken = await AsyncStorage.getItem('userToken');
+            let AuthStr = 'Bearer ' + userToken;
+            fetch('http://bowy.ru/api/allproducts', {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': AuthStr,
+                },
+            })
+                .then((response) => response.json())
+                .then((res) => {
+                        this.setState({loggedUserID: userID})
+                        this.setState({products: res.product_data})
+                        this.setState({products1: res.product_data})
+                    }
+                )
+                .catch((e) => {
+                    console.log(e)
+                })
+
+        } catch (e) {
+            /////////////
+        }
+    }
+
+    getRegions = () => {
+        fetch('http://bowy.ru/api/home')
+            .then(res => res.json())
+            .then((res) => {
+                const carCategory = []
+                res[1].forEach((item) => {
+                    let picker = {}
+                    picker.label = item.name
+                    picker.value = item.name
+                    picker.id = item.id
+                    carCategory.push(picker)
+                })
+                this.setState({regionCategoryItems: carCategory})
+            })
+            .catch(() => {
+                console.log("Hello")
+            })
+    }
+
+    getCities = async (regionId) => {
+        try {
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+            fetch(`http://bowy.ru/api/city`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': AuthStr,
+                }
+            })
+                .then(response => response.json())
+                .then((response) => {
+                    console.log(response)
+                    let arr = []
+                    response[1]
+                        .filter((item) => item.region_id === regionId)
+                        .map((item) => {
+                            let picker = {}
+                            picker.label = item.name
+                            picker.value = item.name
+                            picker.id = item.id
+                            arr.push(picker)
+                        })
+                    this.setState({cityListItems: arr})
+                })
+                .catch((e) => {
+                    // console.log(e)
+                })
+        } catch (e) {
+            // console.log(e)
+        }
     }
 
     setModalVisible(visible) {
@@ -252,36 +238,144 @@ export default class FeedsScreenComponent extends Component {
         });
     }
 
-    onToggleArray = (item, index) => {
-        this.setState(state => {
-            const wishlist = state.wishlist.includes(item.id)
-                ? state.wishlist.filter(i => i !== item.id) // remove item
-                : [...state.wishlist, item.id]; // add item
-            return {
-                wishlist,
-            };
-        });
-    };
-
     openSingleCar = (data) => {
-
-        // data.navigation = this.props.navigation
-        // console.log(data)
+        let obj = {info: data}
         this.props.navigation.navigate('SingleCar', {
-            params: data,
+            params: obj,
             navigation: JSON.stringify(this.props.navigation)
         })
     };
 
+    getCategories = () => {
+        fetch('http://bowy.ru/api/home')
+            .then(res => res.json())
+            .then((res) => {
+                const carCategory = []
+                res[0].forEach((item) => {
+                    let picker = {}
+                    picker.label = item.name
+                    picker.value = item.id
+                    picker.id = item.id
+                    carCategory.push(picker)
+                })
+                this.setState({carCategoryItems: carCategory})
+            })
+            .catch((e) => {
+                // console.log(e)
+            })
+    }
+
+    searchItems = (value) => {
+        const {products} = this.state
+        const filteredProducts = []
+        if (value.trim().length > 2) {
+            products.forEach((item) => {
+                if (item.car_model.toLowerCase().includes(value.trim().toLowerCase())) {
+                    filteredProducts.push(item)
+                } else if (item.address.toLowerCase().includes(value.trim().toLowerCase())) {
+                    filteredProducts.push(item)
+                } else if (item.description.toLowerCase().includes(value.trim().toLowerCase())) {
+                    filteredProducts.push(item)
+                } else if (item.headline.toLowerCase().includes(value.trim().toLowerCase())) {
+                    filteredProducts.push(item)
+                } else if (item.headline.toLowerCase().includes(value.trim().toLowerCase())) {
+                    filteredProducts.push(item)
+                }
+                this.setState({products: filteredProducts})
+            })
+        } else {
+            this.setState({products: this.state.products1})
+        }
+    }
+
+    check = () => {
+
+        const {products} = this.state
+        let filteredProduct = JSON.parse(JSON.stringify(products))
+        if (this.state.carCategoryValue) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return Number(item.category_id) === Number(this.state.carCategoryValue)
+            })
+        }
+
+        if (this.state.regionCategoryValue) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return item.region === this.state.regionCategoryValue
+            })
+        }
+
+        if (this.state.cityListValue) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return item.city === this.state.cityListValue
+            })
+
+        }
+        if (this.state.streetValue) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return item.address.toLowerCase().includes(this.state.cityListValue.trim().toLowerCase())
+            })
+
+        }
+        if (this.state.minCost) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return Number(item.price) >= Number(this.state.minCost)
+            })
+
+        }
+        if (this.state.maxCost) {
+            filteredProduct = filteredProduct.filter((item) => {
+                return Number(item.price) <= Number(this.state.maxCost)
+            })
+
+        }
+
+        if (this.state.filterSortBy) {
+
+            if (this.state.filterSortBy === "min_price") {
+                filteredProduct = filteredProduct.sort((a, b) => Number(a.price) - Number(b.price))
+
+
+            } else if (this.state.filterSortBy === "max_price") {
+                filteredProduct = filteredProduct.sort((a, b) => Number(b.price) - Number(a.price))
+
+            } else {
+                JSON.parse(JSON.stringify(this.state.products1))
+            }
+        }
+        this.setState({products: filteredProduct})
+    }
+
+    filterItems = async () => {
+
+        try {
+            await this.setState({products: JSON.parse(JSON.stringify(this.state.products1))})
+            await this.check()
+            await this.setState({filterModalVisible: false})
+        } catch (e) {
+            console.log("eeeeeeeeeeeeeeeeee")
+        }
+
+
+    }
+
+
+    componentDidMount() {
+        this.focusListener = this.props.navigation.addListener("focus", () => {
+            this.getProducts()
+            this.getCategories()
+            this.getRegions()
+            this.getFavouriteItems()
+        });
+    }
+
+
     render() {
-        console.log(this.state.products)
         return (
             <View style={feedsStyles.feedsScreenMainView}>
-
                 {/*Search Filter form*/}
 
                 <Modal
-                    animationType="fade"
+                    animationType="slide"
                     transparent={false}
                     visible={this.state.filterModalVisible}
                     style={{width: '100%'}}
@@ -292,7 +386,8 @@ export default class FeedsScreenComponent extends Component {
                             <Text style={feedsStyles.modalContainerTitle}>Фильтры</Text>
 
                             <TouchableOpacity onPress={() => {
-                                this.setModalVisible(!this.state.filterModalVisible);
+                                this.setState({filterModalVisible: false})
+                                this.setState({products: this.state.products1})
                             }}>
                                 <Image style={feedsStyles.closeModal}
                                        source={require('../../assets/img/close_modal.png')}/>
@@ -303,119 +398,113 @@ export default class FeedsScreenComponent extends Component {
 
                         <ScrollView style={feedsStyles.filterFieldsWrapper}>
 
-                            <DropDownPicker
-
-                                items={[
-                                    {label: 'Категория', value: null},
-                                    {label: 'На продажу', value: '1'},
-                                    {label: 'В аренду', value: '2'},
-                                    {label: 'В кредит', value: '3'},
-                                ]}
-                                defaultValue={this.state.filterCategory}
-                                containerStyle={{height: 45}}
-                                style={{
-                                    backgroundColor: '#F0F4F8',
-                                    borderWidth: 0,
-                                    width: '100%',
-
-                                }}
-                                placeholder='Категория'
-                                labelStyle={{
-                                    color: '#8B94A3',
-                                }}
-                                itemStyle={{
-                                    justifyContent: 'flex-start',
-                                    // width:'100%',
-                                    // borderBottomColor: "#a2abc25c",
-                                    // borderBottomWidth: 1,
-                                }}
-                                dropDownStyle={{backgroundColor: '#fafafa'}}
-                                onChangeItem={item => this.setState({
-                                    filterCategory: item.value
-                                })}
-                            />
-                            <View style={feedsStyles.locationWrapper}>
-
+                            <View style={feedsStyles.category1}>
                                 <DropDownPicker
-                                    items={[
-                                        {label: 'Город', value: null},
-                                        {label: 'Ереван', value: '1'},
-                                        {label: 'Москва', value: '2'},
-                                        {label: 'Санкт-Питербург', value: '3'},
-                                    ]}
-                                    defaultValue={this.state.locationCity}
-                                    containerStyle={{height: 45}}
+                                    open={this.state.carCategoryOpen}
+                                    value={this.state.carCategoryValue}
+                                    items={this.state.carCategoryItems}
+                                    setOpen={() => {
+                                        this.setState((state) => ({carCategoryOpen: !state.carCategoryOpen}))
+                                    }}
+                                    maxHeight={200}
+                                    setValue={(call) => this.setState((value) => ({carCategoryValue: call(value)}))}
+                                    placeholder="Категория"
                                     style={{
-                                        backgroundColor: '#F0F4F8',
-                                        borderWidth: 0,
-                                        borderBottomWidth: 1,
-                                        width: '103%',
-                                        borderBottomColor: "#a2abc25c",
-                                        paddingLeft: 0,
-                                        position: 'relative',
-
-                                    }}
-                                    placeholder='Город'
-                                    labelStyle={{
-                                        color: '#8B94A3',
-                                    }}
-                                    itemStyle={{
-                                        justifyContent: 'flex-start',
-                                        paddingLeft: 7,
                                         width: '100%',
-                                        // borderBottomColor: "#a2abc25c",
-                                        // borderBottomWidth: 1,
-                                    }}
-
-                                    dropDownStyle={{backgroundColor: '#fafafa'}}
-                                    onChangeItem={item => this.setState({
-                                        locationCity: item.value
-                                    })}
-                                />
-                                <DropDownPicker
-                                    items={[
-                                        {label: 'Город', value: null},
-                                        {label: 'Ереван', value: '1'},
-                                        {label: 'Москва', value: '2'},
-                                        {label: 'Санкт-Питербург', value: '3'},
-                                    ]}
-                                    defaultValue={this.state.locationCity}
-                                    containerStyle={{height: 45}}
-                                    style={{
-                                        backgroundColor: '#F0F4F8',
                                         borderWidth: 0,
-                                        borderBottomWidth: 1,
-                                        width: '103%',
-                                        borderBottomColor: "#a2abc25c",
-                                        paddingLeft: 0,
-                                        position: 'relative',
-
+                                        height: 55,
+                                        backgroundColor: '#F0F4F8',
+                                        marginBottom: 15,
                                     }}
-                                    placeholder='Регион'
-                                    labelStyle={{
-                                        color: '#8B94A3',
+                                    placeholderStyle={{color: "grey",}}
+                                    onOpen={() => {
+                                        this.setState({regionCategoryOpen: false})
+                                        this.setState({cityListOpen: false})
                                     }}
-                                    itemStyle={{
-                                        justifyContent: 'flex-start',
-                                        paddingLeft: 7,
-                                        width: '100%',
-                                        // borderBottomColor: "#a2abc25c",
-                                        // borderBottomWidth: 1,
-                                    }}
-
-                                    dropDownStyle={{backgroundColor: '#fafafa'}}
-                                    onChangeItem={item => this.setState({
-                                        locationCity: item.value
-                                    })}
+                                    zIndex={10}
+                                    listMode="SCROLLVIEW"
                                 />
 
-                                <View style={feedsStyles.streetWrapper}>
-                                    <TextInput
-                                        style={feedsStyles.textInputStyle}
-                                        underlineColorAndroid="transparent"
-                                        placeholder="Улица"
-                                    />
-                                </View>
+
+                                <DropDownPicker
+                                    open={this.state.regionCategoryOpen}
+                                    value={this.state.regionCategoryValue}
+                                    items={this.state.regionCategoryItems}
+                                    setOpen={() => {
+                                        this.setState((state) => ({regionCategoryOpen: !state.regionCategoryOpen}))
+                                    }}
+                                    maxHeight={200}
+                                    setValue={(call) => this.setState((value) => ({regionCategoryValue: call(value)}))}
+                                    placeholder="Область"
+                                    style={{
+                                        width: '100%',
+                                        borderWidth: 0,
+                                        height: 55,
+                                        borderColor: '#E0E5ED',
+                                        backgroundColor: '#F0F4F8',
+                                        borderRadius: 0,
+                                        borderTopRightRadius: 10,
+                                        borderTopLeftRadius: 10,
+                                        borderBottomWidth: 1,
+
+                                    }}
+                                    language="RU"
+                                    placeholderStyle={{color: "grey",}}
+                                    onOpen={() => {
+                                        this.setState({carCategoryOpen: false})
+                                        this.setState({cityListOpen: false})
+                                    }}
+                                    listMode="SCROLLVIEW"
+                                    zIndex={9}
+                                    onSelectItem={(item) => {
+                                        this.getCities(item.id)
+                                    }}
+
+                                />
+
+                                <DropDownPicker
+                                    open={this.state.cityListOpen}
+                                    value={this.state.cityListValue}
+                                    items={this.state.cityListItems}
+                                    setOpen={() => {
+                                        this.setState((state) => ({cityListOpen: !state.cityListOpen}))
+                                    }}
+                                    language="RU"
+                                    maxHeight={200}
+                                    setValue={(call) => this.setState((value) => ({cityListValue: call(value)}))}
+                                    placeholder="Город"
+                                    style={{
+                                        width: '100%',
+                                        borderWidth: 0,
+                                        height: 55,
+                                        borderColor: '#E0E5ED',
+                                        backgroundColor: '#F0F4F8',
+                                        borderRadius: 0,
+                                        borderBottomWidth: 1,
+                                    }}
+                                    placeholderStyle={{color: "grey",}}
+                                    onOpen={() => {
+                                        this.setState({carCategoryOpen: false})
+                                        this.setState({regionCategoryOpen: false})
+                                    }}
+                                    listMode="SCROLLVIEW"
+                                    zIndex={8}
+                                />
+
+                                <TextInput
+                                    style={[feedsStyles.costCategory, {
+                                        borderBottomRightRadius: 15,
+                                        borderBottomLeftRadius: 15,
+                                        marginBottom: 15,
+
+                                    }]}
+                                    underlineColorAndroid="transparent"
+                                    placeholder="Улица"
+                                    value={this.state.streetValue}
+                                    onChangeText={(streetValue) => this.setState({streetValue})}
+
+                                />
+
 
                                 {/*<Slider min={0} max={40} step={1}*/}
                                 {/*        valueOnChange={value => this.setState({*/}
@@ -429,27 +518,35 @@ export default class FeedsScreenComponent extends Component {
                                 {/*        style={{zIndex:5}}*/}
                                 {/*/>*/}
 
+                                <TextInput
+                                    style={[feedsStyles.costCategory, {
+                                        borderBottomWidth: 1,
+                                        borderColor: "#E0E5ED",
+                                        borderTopRightRadius: 10,
+                                        borderTopLeftRadius: 10,
+                                    }]}
+                                    underlineColorAndroid="transparent"
+                                    placeholder="Цена от"
+                                    keyboardType={"numeric"}
+                                    value={this.state.minCost}
+                                    onChangeText={(minCost) => this.setState({minCost})}
+                                />
+
+
+                                <TextInput
+                                    style={[feedsStyles.costCategory, {
+                                        borderBottomRightRadius: 15,
+                                        borderBottomLeftRadius: 15,
+                                    }]}
+                                    underlineColorAndroid="transparent"
+                                    placeholder="Цена до"
+                                    keyboardType={"numeric"}
+                                    value={this.state.maxCost}
+                                    onChangeText={(maxCost) => this.setState({maxCost})}
+                                />
+
                             </View>
 
-                            <View style={feedsStyles.minMaxPriceWrapper}>
-
-                                <View style={feedsStyles.minPriceWrapper}>
-                                    <TextInput
-                                        style={feedsStyles.textInputStyle}
-                                        underlineColorAndroid="transparent"
-                                        placeholder="Цена от"
-                                    />
-                                </View>
-
-                                <View style={feedsStyles.maxPriceWrapper}>
-                                    <TextInput
-                                        style={feedsStyles.textInputStyle}
-                                        underlineColorAndroid="transparent"
-                                        placeholder="Цена до"
-                                    />
-                                </View>
-
-                            </View>
 
                             <View style={feedsStyles.sortByWrapper}>
 
@@ -477,7 +574,7 @@ export default class FeedsScreenComponent extends Component {
 
                                                 <TouchableOpacity style={feedsStyles.rbStyle}>
                                                     {this.state.filterSortBy === res.key &&
-                                                    <View style={feedsStyles.selected}/>}
+                                                        <View style={feedsStyles.selected}/>}
                                                 </TouchableOpacity>
                                                 <Text style={feedsStyles.filterSortLabel}>{res.text}</Text>
 
@@ -488,14 +585,16 @@ export default class FeedsScreenComponent extends Component {
                                 })}
 
                             </View>
+                            <TouchableOpacity onPress={this.filterItems}>
+                                <LinearGradient colors={['#34BE7C', '#2EB6A5']}
+                                                style={feedsStyles.filterSearchButton}>
 
-                            <LinearGradient colors={['#34BE7C', '#2EB6A5']} style={feedsStyles.filterSearchButton}>
-                                <TouchableOpacity>
                                     <Text style={{color: 'white'}}>
-                                        Показать 120 объявлений
+                                        Показать {this.state.filteredProductCount} объявлений
                                     </Text>
-                                </TouchableOpacity>
-                            </LinearGradient>
+
+                                </LinearGradient>
+                            </TouchableOpacity>
 
                         </ScrollView>
 
@@ -503,13 +602,11 @@ export default class FeedsScreenComponent extends Component {
                     </View>
                 </Modal>
 
-
                 {/*Search form*/}
 
                 <View style={feedsStyles.textInputWrapperStyle}>
 
                     <View style={feedsStyles.textInputContainerStyle}>
-
                         <TouchableOpacity>
                             <Image style={feedsStyles.textInputImg}
                                    source={require('../../assets/img/search_input_icon.png')}/>
@@ -519,68 +616,92 @@ export default class FeedsScreenComponent extends Component {
                             style={feedsStyles.textInputStyle}
                             underlineColorAndroid="transparent"
                             placeholder="Поиск авто"
+                            value={this.state.searchValue}
+                            onChangeText={(text) => {
+                                this.setState({searchValue: text})
+                                this.searchItems(text)
+                            }}
                         />
 
-                        <View style={feedsStyles.searchLine}></View>
 
                         <TouchableOpacity onPress={() => {
                             this.setModalVisible(!this.state.filterModalVisible);
                         }}>
                             <Image style={feedsStyles.textInputImgFilterIcon}
-                                   source={require('../../assets/img/filter.png')}/>
+                                   source={require('../../assets/img/filter.svg')}/>
                         </TouchableOpacity>
+
 
                     </View>
 
                 </View>
 
-                <ScrollView style={feedsStyles.scrollView}>
+                <SafeAreaView style={feedsStyles.safeArea}>
+                    <FlatList
+                        extraData={this.state}
+                        data={this.state.products}
+                        renderItem={({item}) => {
 
-                    {articleData.map((article, index) => (
-                        <View key={article.id} style={feedsStyles.feedsCaritems}>
+                            return <View style={feedsStyles.feedsCaritems}>
 
-                            <View style={feedsStyles.feedsCarImgWrapper}>
-                                <Image style={feedsStyles.feedsCaritemsImg} source={article.image}/>
-                                <TouchableOpacity style={feedsStyles.addinwish}
-                                                  onPress={() => this.onToggleArray(article)}>
-                                    <Image
-                                        source={this.state.wishlist.includes(article.id) ? wishIcons[1] : wishIcons[0]}/>
-                                </TouchableOpacity>
+
+                                <View style={feedsStyles.feedsCarImgWrapper} key={item.id}>
+                                    <Image style={feedsStyles.feedsCaritemsImg}
+                                           source={{uri: `http://bowy.ru/storage/uploads/${item.image[0]?.image}`}}/>
+                                    {Number(item.user_id) !== Number(this.state.loggedUserID) && <TouchableOpacity style={feedsStyles.addinwish}
+                                                                                                                   onPress={() => {
+                                                                                                                       if (this.state.wishListId.includes(item.id)) {
+                                                                                                                           this.setState(prev => ({wishListId: prev.wishListId.filter(items => item.id !== items)}))
+                                                                                                                           this.removeFromFavourites(item.id)
+
+                                                                                                                       } else {
+                                                                                                                           this.addToFavourites(item.user_id, item.id)
+                                                                                                                           this.setState((prev) => ({wishListId: [...prev.wishListId, item.id]}))
+                                                                                                                       }
+                                                                                                                   }}>
+                                        <Image
+                                            source={this.state.wishListId.includes(item.id) ? wishIcons[1] : wishIcons[0]}/>
+                                    </TouchableOpacity>}
+                                </View>
+
+                                <View style={feedsStyles.feedsCarItemRight}>
+
+                                    <TouchableOpacity onPress={() => this.openSingleCar(item)}>
+                                        <Text style={{
+                                            fontSize: 14,
+                                            fontWeight: '700',
+                                            color: '#424A55',
+                                            marginBottom: 10
+                                        }}>{item.headline}</Text>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 13
+                                        }}>{item.price}</Text>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 5
+                                        }}>{item.address}</Text>
+                                        <Text style={{
+                                            fontSize: 10,
+                                            fontWeight: '400',
+                                            color: '#424A55',
+                                            marginBottom: 5
+                                        }}>
+                                            {item.updated_at.split("").slice(0, 10).join("")}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-
-                            <View style={feedsStyles.feedsCarItemRight}>
-                                <TouchableOpacity onPress={() => this.openSingleCar(article)}>
-                                    <Text style={{
-                                        fontSize: 14,
-                                        fontWeight: '700',
-                                        color: '#424A55',
-                                        marginBottom: 10
-                                    }}>{article.title}</Text>
-                                    <Text style={{
-                                        fontSize: 12,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 13
-                                    }}>{article.price}</Text>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 5
-                                    }}>{article.address}</Text>
-                                    <Text style={{
-                                        fontSize: 10,
-                                        fontWeight: '400',
-                                        color: '#424A55',
-                                        marginBottom: 5
-                                    }}>{article.date}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))}
-
-                </ScrollView>
-
+                        }}
+                        // keyExtractor={(item) => {
+                        //     item.id
+                        // }}
+                    />
+                </SafeAreaView>
             </View>
         )
     }

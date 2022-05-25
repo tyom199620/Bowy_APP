@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert} from 'react-native';
+import {Image, ScrollView, Text, TextInput, TouchableOpacity, View, Alert, Modal} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import {EvilIcons} from '@expo/vector-icons';
@@ -9,7 +9,7 @@ import {addCarStyle} from './AddCarStyles';
 import * as ImagePicker from 'expo-image-picker';
 import {LinearGradient} from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {feedsStyles} from "../Feeds/feedsStyles";
 
 
 export default class AddCar extends Component {
@@ -61,54 +61,32 @@ export default class AddCar extends Component {
             gearBoxOpen: false,
             gearBoxValue: null,
             gearBoxItem: [
-                {label: "Механическая коробка передач", value: "manual"},
-                {label: "Автоматическая коробка передач", value: "automate"},
-                {label: "Роботизированная коробка передач (робот, типтроник)", value: "tiptronic"},
-                {label: "Другой", value: "other"},
+                {label: "Механическая коробка передач", value: "Механическая"},
+                {label: "Автоматическая коробка передач", value: "Автоматическая"},
+                {label: "Роботизированная коробка передач (робот, типтроник)", value: "робот, типтроник"},
+                {label: "Другой", value: "Другой"},
             ],
 
             carModelOpen: false,
             carModelValue: null,
             carModelItems: [],
 
+            rudderOpen: false,
+            rudderValue: null,
+            rudderItems: [
+                {label: "левый", value: "левый"},
+                {label: "правый", value: "правый"},
+            ],
+
 
             selectedImages: [],
-            selectedImagesUri: '',
+            imageError: null,
 
 
             title: "",
             price: "",
             address: "",
             description: "",
-
-
-            addedCarDetails: {
-                headline: '',
-                adDescription: '',
-                carModel: '',
-                headLine2: '',
-                adDescription2: '',
-                price2: '',
-                address2: '',
-
-                price: '',
-                address: '',
-                id: '',
-                description: '',
-                image: '',
-                userImage: '',
-                slider: '',
-                title: '',
-                date: '',
-                autoMark: '',
-                body_type: '',
-                yearOfIssue: '',
-                transmission: '',
-                rull: '',
-                user_name: '',
-                post_count: '',
-                phone_number: '',
-            }
 
         }
     }
@@ -117,32 +95,33 @@ export default class AddCar extends Component {
     handleBack = () => {
         this.props.navigation.navigate('Feeds')
     };
+
+
     renderPicketPhoto = () => {
         let {selectedImages} = this.state;
-        console.log()
-
         if (selectedImages.length) {
             return (
-
                 <ScrollView style={{}} horizontal={true}>
-                    {selectedImages.map(item => (
-                        <View style={{width: 100, height: 100, marginRight: 20}}>
-                            <TouchableOpacity style={addCarStyle.removeCarStyle} onPress={() => {
-                                this.handleRemoveCar(item)
-                            }}>
-                                <Image
-                                    style={{justifyContent: 'center'}}
-                                    source={require('../../assets/img/trashicon.png')}/>
-                            </TouchableOpacity>
-                            <Image source={{uri: item}} style={{
-                                width: 100,
-                                height: 100,
-                                borderWidth: 3,
-                                borderRadius: 10,
-                            }}
-                            />
-                        </View>
-                    ))}
+                    {
+                        selectedImages.map((item) => (
+                            <View style={{width: 100, height: 100, marginRight: 20}} key={item.key}>
+                                <TouchableOpacity style={addCarStyle.removeCarStyle} onPress={() => {
+                                    this.handleRemoveCar(item)
+                                }}>
+                                    <Image
+                                        style={{justifyContent: 'center'}}
+                                        source={require('../../assets/img/trashicon.png')}/>
+                                </TouchableOpacity>
+                                <Image source={{uri: item.uri}} style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderWidth: 3,
+                                    borderRadius: 10,
+                                }}
+                                />
+                            </View>
+                        ))
+                    }
 
                 </ScrollView>
             );
@@ -157,13 +136,26 @@ export default class AddCar extends Component {
             return;
         }
 
+
         let pickerResult = await ImagePicker.launchImageLibraryAsync();
         if (pickerResult.cancelled === true) {
             return;
         }
+
+
+        pickerResult.key = pickerResult.uri
+        let res = pickerResult.uri.split('.');
+        let type = res[res.length - 1];
+
+
+        if (type !== 'jpg' && type !== 'png' && type !== 'jpeg') {
+            Alert.alert("формат картинки должен быть JPEG, PNG или JPG")
+            return
+        }
+
+
         let {selectedImages} = this.state;
-        selectedImages.push(pickerResult.uri);
-        console.log(selectedImages);
+        selectedImages.push(pickerResult);
         this.setState({
             selectedImages
         })
@@ -184,7 +176,7 @@ export default class AddCar extends Component {
                 res[0].forEach((item) => {
                     let picker = {}
                     picker.label = item.name
-                    picker.value = item.name
+                    picker.value = item.id
                     picker.id = item.id
                     carCategory.push(picker)
                 })
@@ -211,17 +203,6 @@ export default class AddCar extends Component {
             .catch(() => {
                 console.log("Hello")
             })
-    }
-    getCarYears = () => {
-        let arr = []
-        let maxCarAge = new Date().getFullYear().toString()
-        for (let i = maxCarAge; i >= 1950; i--) {
-            let picker = {}
-            picker.label = i
-            picker.value = i
-            arr.push(picker)
-        }
-        this.setState({carAgeItems: arr})
     }
     getCities = async (regionId) => {
         try {
@@ -250,11 +231,22 @@ export default class AddCar extends Component {
                     this.setState({cityListItems: arr})
                 })
                 .catch((e) => {
-                    console.log(e)
+                    // console.log(e)
                 })
         } catch (e) {
-            console.log(e)
+            // console.log(e)
         }
+    }
+    getCarYears = () => {
+        let arr = []
+        let maxCarAge = new Date().getFullYear().toString()
+        for (let i = maxCarAge; i >= 1950; i--) {
+            let picker = {}
+            picker.label = i
+            picker.value = i
+            arr.push(picker)
+        }
+        this.setState({carAgeItems: arr})
     }
     getCarModel = async () => {
         try {
@@ -281,13 +273,13 @@ export default class AddCar extends Component {
                     this.setState({carModelItems: arr})
                 })
                 .catch((e) => {
-                    console.log(e)
+                    // console.log(e)
                 })
         } catch (e) {
 
         }
-
     }
+
     componentDidMount() {
         this.getCategories()
         this.getRegions()
@@ -297,30 +289,89 @@ export default class AddCar extends Component {
     }
 
 
-    addAnnouncement=()=>{
-        let arr={
-            headline: this.state.title,
-            region: this.state.regionCategoryValue,
-            city: this.state.cityListValue,
-            price: this.state.price,
-            address: this.state.address,
-            car_model: this.state.carModelValue,
-            description: this.state.description,
-            body_type: this.state.bodyTypeValue,
+    addAnnouncement = async () => {
+        let {selectedImages} = this.state
+        try {
+            if (!this.state.selectedImages.length) {
+                this.setState({imageError: "добавить картинки обязательно"})
+                return
+            }
+            const form = new FormData();
+            form.append('image', {
+                uri: selectedImages[0].uri,
+                type: 'image/jpg',
+                name: 'image.jpg',
+            });
+            form.append("headline", this.state.title)
+            form.append("region", this.state.regionCategoryValue);
+            form.append("city", this.state.cityListValue);
+            form.append("price", this.state.price);
+            form.append("address", this.state.address);
+            form.append("car_model", this.state.carModelValue);
+            form.append("description", this.state.description);
+            form.append("body_type", this.state.bodyTypeValue);
+            form.append("rudder", this.state.rudderValue);
+            form.append("year_of_issue", this.state.carAgeValue);
+            form.append("transmission", this.state.gearBoxValue);
+            form.append("category_id", this.state.carCategoryValue);
 
+
+            let userToken = await AsyncStorage.getItem("userToken")
+            let AuthStr = "Bearer " + userToken
+
+            fetch("http://bowy.ru/api/products", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': AuthStr,
+                },
+                body: form
+
+
+            })
+                .then(response => response.json())
+                .then((res) => {
+                    if (res.success) {
+                        this.setState({
+                            selectedImages: [],
+                            carCategoryValue: null,
+                            regionCategoryValue: null,
+                            cityListValue: null,
+                            carAgeValue: null,
+                            bodyTypeValue: null,
+                            gearBoxValue: null,
+                            carModelValue: null,
+                            rudderValue: null,
+                            imageError: null,
+                            title: "",
+                            price: "",
+                            address: "",
+                            description: "",
+
+                        })
+                        Alert.alert("Ваше объявление успешно добавлено")
+                        setTimeout(()=>{
+                            this.props.navigation.navigate("Feeds")
+                        }, 2000)
+                    }
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+        } catch (e) {
+            console.log(e)
         }
 
-        console.log(arr)
     }
 
 
     render() {
         return (
+
             <View style={{width: '100%', height: '100%', backgroundColor: 'white'}}>
 
-
                 <View style={addCarStyle.container}>
-
 
                     <View style={addCarStyle.titleStyles}>
                         <Text style={{fontSize: 23, fontWeight: "bold"}}>Создание объявления</Text>
@@ -328,7 +379,6 @@ export default class AddCar extends Component {
                             <EvilIcons name="close" size={23} color="black"/>
                         </TouchableOpacity>
                     </View>
-
 
                     <ScrollView style={{width: "100%"}}>
 
@@ -468,28 +518,6 @@ export default class AddCar extends Component {
                                 zIndex={7}
                             />
 
-                            {/*<DropDownPicker*/}
-                            {/*    items={[*/}
-                            {/*        {label: "Механическая коробка передач", value: "manual"},*/}
-                            {/*        {label: "Автоматическая коробка передач", value: "automate"},*/}
-                            {/*        {label: "Роботизированная коробка передач (робот, типтроник)", value: "tiptronic"},*/}
-                            {/*        {label: "other", value: "other"},*/}
-                            {/*    ]}*/}
-                            {/*    placeholder={"Модель автомобиля"}*/}
-                            {/*    maxHeight={200}*/}
-                            {/*    placeholderStyle={{color: "grey",}}*/}
-                            {/*    style={{*/}
-                            {/*        width: '100%',*/}
-                            {/*        borderWidth: 0,*/}
-                            {/*        borderBottomWidth: 1,*/}
-                            {/*        height: 60,*/}
-                            {/*        borderColor: '#A2ABC2',*/}
-                            {/*        paddingLeft: 13,*/}
-                            {/*        backgroundColor: '#F0F4F8',*/}
-                            {/*    }}*/}
-                            {/*    listMode="SCROLLVIEW"*/}
-                            {/*    zIndex={9997}*/}
-                            {/*/>*/}
 
                             <TextInput
                                 style={{width: '100%', height: 60, paddingLeft: 13}}
@@ -505,17 +533,16 @@ export default class AddCar extends Component {
                                 </Text>
                             </View>
 
-
                             <DropDownPicker
-                                open={this.state.bodyTypeOpen}
-                                value={this.state.bodyTypeValue}
-                                items={this.state.bodyTypeItems}
+                                open={this.state.rudderOpen}
+                                value={this.state.rudderValue}
+                                items={this.state.rudderItems}
                                 setOpen={() => {
-                                    this.setState((state) => ({bodyTypeOpen: !state.bodyTypeOpen}))
+                                    this.setState((state) => ({rudderOpen: !state.rudderOpen}))
                                 }}
                                 maxHeight={200}
-                                setValue={(call) => this.setState((value) => ({bodyTypeValue: call(value)}))}
-                                placeholder="Тип кузова"
+                                setValue={(call) => this.setState((value) => ({rudderValue: call(value)}))}
+                                placeholder="Руль"
                                 style={{
                                     width: '100%',
                                     borderWidth: 0,
@@ -529,7 +556,7 @@ export default class AddCar extends Component {
                                 onOpen={() => {
                                     this.setState({regionCategoryOpen: false})
                                 }}
-                                zIndex={4}
+                                zIndex={6}
                                 listMode="SCROLLVIEW"
                             />
 
@@ -558,7 +585,7 @@ export default class AddCar extends Component {
                                     this.setState({regionCategoryOpen: false})
                                     this.setState({carCategoryOpen: false})
                                 }}
-                                zIndex={6}
+                                zIndex={5}
                                 listMode="SCROLLVIEW"
                             />
 
@@ -587,7 +614,7 @@ export default class AddCar extends Component {
                                     this.setState({regionCategoryOpen: false})
                                     this.setState({carCategoryOpen: false})
                                 }}
-                                zIndex={5}
+                                zIndex={4}
                                 listMode="SCROLLVIEW"
                             />
 
@@ -615,22 +642,45 @@ export default class AddCar extends Component {
                                 onOpen={() => {
                                     this.setState({regionCategoryOpen: false})
                                 }}
-                                zIndex={4}
+                                zIndex={3}
                                 listMode="SCROLLVIEW"
                             />
 
 
-                            <View style={{width: '100%', flexDirection: 'row',}}>
-                                <TouchableOpacity style={addCarStyle.imagePicker} onPress={this.openImagePickerAsync}>
-                                    <Text style={addCarStyle.imagePickerIcon}>
-                                        +
-                                    </Text>
-                                </TouchableOpacity>
+                            <View style={{flexDirection: "column", width: "100%", marginTop: 40, alignItems: "center"}}>
+                                {this.state.imageError ? <Text style={{
+                                    width: "70%",
+                                    alignSelf: "flex-start",
+                                    color: 'red',
+                                    marginBottom: 3,
+                                    fontSize: 13,
+                                    paddingBottom: 10,
+                                }}>
+                                    {this.state.imageError}
+                                </Text> : null}
 
-                                <View style={addCarStyle.pickedPhotoStyle}>
-                                    {this.renderPicketPhoto()}
+                                <View style={{
+                                    width: '100%',
+                                    flexDirection: 'row',
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}>
+
+                                    <TouchableOpacity style={addCarStyle.imagePicker}
+                                                      onPress={this.openImagePickerAsync}>
+                                        <Text style={addCarStyle.imagePickerIcon}>
+                                            +
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <View style={addCarStyle.pickedPhotoStyle}>
+                                        {this.renderPicketPhoto()}
+                                    </View>
                                 </View>
+
+
                             </View>
+
 
                             <TouchableOpacity onPress={this.addAnnouncement}>
                                 <LinearGradient colors={['#34BE7C', '#2EB6A5']} style={addCarStyle.linearGradient}>
@@ -651,10 +701,3 @@ export default class AddCar extends Component {
         )
     }
 }
-
-
-
-
-
-
-
